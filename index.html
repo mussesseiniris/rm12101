@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Artfolio</title>
+    <!-- 引入外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        art: {
+                            dark: '#93a8f9', //'#171c3a'
+                            light: '#f695ff', //'#f695ff'
+                            accent: '#f695ff',//'#f695ff'
+                            gray: '#f695ff', //'#333333',
+                            lightgray: '#e0d9d2',
+                            darkblue:'#171c3a' //'#93a8f9'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Cormorant Garamond', 'serif'],
+                        sans: ['Montserrat', 'sans-serif']
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-stroke {
+                -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+                color: transparent;
+            }
+            .art-shadow {
+                box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.2);
+            }
+            .hover-lift {
+                transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                            box-shadow 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            .hover-lift:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.3);
+            }
+        }
+    </style>
+    
+    <style>
+
+body {
+  cursor: url('mouse1.png'), auto; /* 替换为你的图标路径 */
+}
+      
+        /* 基础动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 1.2s ease forwards;
+        }
+        
+        .animate-slide-up {
+            animation: slideUp 1s ease forwards;
+        }
+        
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+        .delay-700 { animation-delay: 0.7s; }
+        .delay-1000 { animation-delay: 1s; }
+        
+        /* 导航栏效果 */
+        .nav-transparent {
+            background-color: transparent;
+            transition: background-color 0.5s ease;
+        }
+        
+        .nav-solid {
+            background-color: rgba(23, 28, 58, 0.95);
+            transition: background-color 0.5s ease;
+        }
+        
+        /* 图片悬停效果 */
+        .artwork-overlay {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .artwork-card:hover .artwork-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .artwork-image {
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .artwork-card:hover .artwork-image {
+            transform: scale(1.05);
+        }
+        
+        /* 平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #93a8f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background-color: #171c3a;
+            border-radius: 2px;
+            max-width: 92%;
+            max-height: 90%;
+            width: 100%;
+            max-width: 1600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #171c3a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            opacity: 0.7;
+        }
+        
+        .modal-close:hover {
+            color: #f695ff;
+            opacity: 1;
+        }
+        
+        .modal-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .modal-image-container {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-color: #171c3a;
+        }
+        
+        .modal-image {
+            max-width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-navigation {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+        
+        .modal-nav-btn {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 20px;
+            opacity: 0.7;
+        }
+        
+        .modal-nav-btn:hover {
+            background-color: #f695ff;
+            opacity: 1;
+        }
+        
+        .modal-details {
+            flex: 0 0 420px;
+            padding: 30px;
+            overflow-y: auto;
+            color: #93a8f9;
+        }
+        
+        .modal-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        
+        .modal-category {
+            color: #f695ff;
+            margin-bottom: 25px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+        }
+        
+        .modal-description {
+            margin-bottom: 30px;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+        
+        .modal-image-desc {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-left: 2px solid #f695ff;
+            margin-top: 20px;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        
+        .modal-image-counter {
+            margin-top: 18px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .modal-meta {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .modal-meta p {
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+        
+        .modal-meta strong {
+            color: #f695ff;
+            width: 110px;
+            display: inline-block;
+        }
+        
+        .modal-indicators {
+            display: flex;
+            gap: 8px;
+            margin-top: 25px;
+            justify-content: center;
+        }
+        
+        .modal-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-indicator.active {
+            background-color: #93a8f9;
+            transform: scale(1.2);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 1024px) {
+            .modal-body {
+                flex-direction: column;
+            }
+            
+            .modal-details {
+                flex: none;
+                max-height: 40%;
+            }
+            
+            .modal-image-container {
+                max-height: 60%;
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .modal-header {
+                padding: 15px 20px;
+            }
+            
+            .modal-title {
+                font-size: 26px;
+            }
+            
+            .modal-details {
+                padding: 20px;
+                flex: none;
+                max-height: 50%;
+            }
+            
+            .modal-image-container {
+                padding: 15px;
+                max-height: 50%;
+            }
+            
+            .modal-nav-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-art-dark text-art-light font-sans">
+    <!-- 导航栏 -->
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-500 py-6 nav-transparent">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="flex justify-between items-center">
+                <a href="#home" class="text-2xl md:text-3xl font-serif font-semibold text-white tracking-wider">
+                    ART<span class="text-art-accent">FOLIO</span>
+                </a>
+                
+                <!-- 桌面端菜单 -->
+                <div class="hidden md:flex space-x-10">
+                    <a href="#home" class="font-medium text-darkblue/80 hover:text-art-dark transition-colors duration-300">Home</a>
+                    <a href="#about" class="font-medium text-darkblue/80 hover:text-art-dark transition-colors duration-300">About</a>
+                    <a href="#portfolio" class="font-medium text-darkblue/80 hover:text-art-dark transition-colors duration-300">Portfolio</a>
+                    <a href="#contact" class="font-medium text-darkblue/80 hover:text-art-dark transition-colors duration-300">Contact</a>
+                </div>
+                
+                <!-- 移动端菜单按钮 -->
+                <button id="menuBtn" class="md:hidden text-white text-xl focus:outline-none">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div id="mobileMenu" class="md:hidden hidden bg-art-dark/95 backdrop-blur-md shadow-lg absolute w-full mt-4">
+            <div class="container mx-auto px-6 py-4 flex flex-col space-y-4">
+                <a href="#home" class="py-2 font-medium text-art-darkblue/80 hover:text-art-accent transition-colors duration-300">Home</a>
+                <a href="#about" class="py-2 font-medium text-art-darkblue/80 hover:text-art-accent transition-colors duration-300">About</a>
+                <a href="#portfolio" class="py-2 font-medium text-art-darkblue/80 hover:text-art-accent transition-colors duration-300">作品</a>
+                <a href="#contact" class="py-2 font-medium text-art-darkblue/80 hover:text-art-accent transition-colors duration-300">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1576662786346-1f941c47a9a3?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="艺术背景" class="w-full h-full object-cover opacity-40">
+            <div class="absolute inset-0 bg-gradient-to-b from-art-dark/20 via-art-dark/60 to-art-dark"></div>
+        </div>
+        
+        <div class="container mx-auto px-6 md:px-12 relative z-10 text-center">
+            <h1 class="text-[clamp(2.5rem,8vw,5rem)] font-serif font-bold leading-tight mb-6 animate-fade-in">
+                <span class="block text-art-darkblue">探索创造的</span>
+                <span class="text-art-accent">无限可能</span>
+            </h1>
+            <p class="text-[clamp(1rem,3vw,1.25rem)] text-white/80 max-w-2xl mx-auto mb-10 animate-slide-up delay-300">
+                Explore the boundless possibilities of creation
+            </p>
+            <a href="#portfolio" class="inline-block border border-art-accent text-art-accent hover:bg-art-accent hover:text-art-dark font-medium px-8 py-3 transition-all duration-500 ease-in-out animate-slide-up delay-500">
+                Browse the portfolio
+            </a>
+        </div>
+        
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <a href="#about" class="text-white/60 hover:text-art-accent transition-colors duration-300">
+                <i class="fa fa-angle-down text-3xl"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- 关于区域 -->
+    <section id="about" class="py-24 md:py-32 bg-art-dark relative overflow-hidden">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+                <div class="lg:w-1/2 relative">
+                    <div class="w-full h-[500px] relative overflow-hidden rounded-sm art-shadow">
+                        <img src="https://images.unsplash.com/photo-1756707706543-6a17023abd13?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxNDZ8fHxlbnwwfHx8fHw%3D" alt="艺术家肖像" class="w-full h-full object-cover">
+                    </div>
+                    <div class="absolute -bottom-6 -right-6 w-40 h-40 md:w-60 md:h-60 border-2 border-art-accent -z-10 hidden md:block"></div>
+                </div>
+                
+                <div class="lg:w-1/2">
+                    <h2 class="text-sm uppercase tracking-widest text-art-darkblue mb-4 opacity-0" data-animate="fade-in">About Designer/Developer </h2>
+                    <h3 class="text-3xl md:text-4xl lg:text-5xl font-serif font-semibold mb-8 text-white opacity-0" data-animate="slide-up" data-delay="200">用艺术表达生活的<span class="text-art-accent">深度与美感</span></h3>
+                    
+                    <p class="text-white/70 mb-6 leading-relaxed opacity-0" data-animate="slide-up" data-delay="300">
+                        Hi, my name is Si Zhang, you can call me Iris. I came from China and got my bachelor’s in landscape architecture. For the past decade, I’ve dedicated myself to this field—using drawings and models to turn empty, barren spaces into public parks or green areas where people can relax and hang out. These experiences have equipped me with systematic thinking skills and efficient collaboration capabilities. 
+                    </p>
+                    
+                    <p class="text-white/70 mb-8 leading-relaxed opacity-0" data-animate="slide-up" data-delay="400">
+                        My passion stems from two things: problem solving and value creation.
+The unique charm that programming brings is that it can validate ideas at a very low cost, and I am addicted to the process of realizing interactive logic with code. Every successful debugging is like solving a puzzle, which makes me realize the perfect combination of logic and creativity. In addition, developing programs for people to use through code programming makes me feel that I have created value.
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-6 opacity-0" data-animate="slide-up" data-delay="500">
+                        <div>
+                            <h4 class="text-3xl font-serif text-art-darkblue mb-2">13+</h4>
+                            <p class="text-white/70 text-sm">Design Life</p>
+                        </div>
+                        <div>
+                            <h4 class="text-3xl font-serif text-art-darkblue mb-2">60+</h4>
+                            <p class="text-white/70 text-sm">Design Works</p>
+                        </div>
+                        <div>
+                            <h4 class="text-100 font-serif text-art-darkblue mb-2">CAD/PhotoShop/SketchUp/Lumion</h4>
+                            <p class="text-white/70 text-sm">Design Skills</p>
+                        </div>
+                        <div>
+                            <h4 class="text-100 font-serif text-art-darkblue mb-2">Java/HTML/CocoScript</h4>
+                            <p class="text-white/70 text-sm">Develop skills</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 作品区域 -->
+    <section id="portfolio" class="py-24 md:py-32 bg-gradient-to-b from-art-dark to-art-gray/90">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="text-center max-w-3xl mx-auto mb-16 md:mb-24">
+                <h2 class="text-sm uppercase tracking-widest text-art-accent mb-4 opacity-0" data-animate="fade-in">精选创作</h2>
+                <h3 class="text-3xl md:text-5xl font-serif font-semibold mb-8 text-art-darkblue opacity-0" data-animate="slide-up" data-delay="200">Portfolio</h3>
+                <p class="text-white/70 leading-relaxed opacity-0" data-animate="slide-up" data-delay="300">
+                    每一件作品都有其独特的故事与创作背景，点击作品可查看详细图片与介绍，体验艺术创作的细节与深度。
+                </p>
+            </div>
+            
+            <!-- 筛选按钮 -->
+            <div class="flex flex-wrap justify-center gap-4 mb-16 opacity-0" data-animate="slide-up" data-delay="400">
+                <button class="filter-btn active bg-art-accent text-art-dark px-6 py-2 rounded-none font-medium transition-all duration-300 text-sm">
+                    Complete Works
+                </button>
+                <button class="filter-btn bg-transparent border border-white/20 text-white/80 hover:bg-art-accent hover:text-art-dark px-6 py-2 rounded-none font-medium transition-all duration-300 text-sm">
+                    Design
+                </button>
+                <button class="filter-btn bg-transparent border border-white/20 text-white/80 hover:bg-art-accent hover:text-art-dark px-6 py-2 rounded-none font-medium transition-all duration-300 text-sm">
+                    Photography
+                </button>
+                <button class="filter-btn bg-transparent border border-white/20 text-white/80 hover:bg-art-accent hover:text-art-dark px-6 py-2 rounded-none font-medium transition-all duration-300 text-sm">
+                    Painting
+                </button>
+                
+            </div>
+            
+            <!-- 作品网格 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+
+                       
+
+                <!-- 作品1 -->
+                <div class="artwork-card group relative overflow-hidden rounded-sm art-shadow hover-lift opacity-0" data-animate="slide-up" data-delay="100" data-category="Design">
+                    <div class="overflow-hidden h-80">
+                        <img src="images/designposition.png" alt="Landscape Design" class="artwork-image w-full h-full object-cover">
+                    </div>
+                    <div class="artwork-overlay absolute inset-0 bg-gradient-to-t from-art-dark via-art-dark/70 to-transparent p-6 flex flex-col justify-end">
+                        <h3 class="text-xl md:text-2xl font-serif font-medium text-white mb-2">Landscape Design</h3>
+                        <p class="text-white/70 text-sm mb-4">Zhushan Lake Landscape Planning and Design · 2020</p>
+                        <a href="#" class="inline-flex items-center text-art-accent hover:text-white transition-colors duration-300 text-sm group">
+                            View Details
+                            <i class="fa fa-long-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </a>
+                    </div>
+                    <!-- 存储图片及对应介绍的数据 -->
+                    <div class="image-data hidden">
+                        {
+                            "title": "Landscape Design",
+                            "category": "抽象Design",
+                            "year": "2023",
+                            "medium": "布面油画",
+                            "description": "这幅抽象系列作品探索了色彩之间的相互作用，通过大胆的笔触和鲜明的对比，表达了生命的活力与激情。作品运用了丰富的色彩层次和动态的构图，创造出一种视觉上的韵律感，如同音乐般在画布上流淌。",
+                            "images": [
+                                {
+                                    "src": "images/zhushanLake.png",
+                                    "desc": "主视图：这幅作品以蓝色为主调，象征着平静与深度，搭配暖色调的点缀，形成鲜明对比，创造出视觉张力。艺术家通过刮刀技法创造出丰富的肌理，使色彩在碰撞中产生独特的视觉效果。"
+                                },
+                                {
+                                    "src": "images/birdview.png",
+                                    "desc": "细节图1：此处运用了刮刀技法，创造出丰富的肌理感，让色彩在碰撞中产生独特的视觉效果，增强了作品的质感与深度。这种技法能表现出传统画笔难以达到的厚重感与层次感。"
+                                },
+                                {
+                                    "src": "images/Currentphotos.png",
+                                    "desc": "细节图2：画面中心的色彩渐变是这幅作品的点睛之笔，展现了色彩自然过渡的美感，体现了艺术家对色彩掌控的精湛技艺。色彩从冷色调向暖色调的微妙转变，象征着情绪的变化。"
+                                },
+                                {
+                                    "src": "images/rendering1.png",
+                                    "desc": "创作过程：这是作品完成前的最后阶段，展示了艺术家如何通过调整细节来平衡整体构图，体现了创作过程中的思考与决策。每一次修改都是为了达到视觉上的和谐与平衡。"
+                                }
+                            ]
+                        }
+                    </div>
+                </div>
+                
+
+
+     <!-- 作品6 -->
+                <div class="artwork-card group relative overflow-hidden rounded-sm art-shadow hover-lift opacity-0" data-animate="slide-up" data-delay="600" data-category="Design">
+                    <div class="overflow-hidden h-80">
+                        <img src="/images/bj07.png" alt="Landscape Design" class="artwork-image w-full h-full object-cover">
+                    </div>
+                    <div class="artwork-overlay absolute inset-0 bg-gradient-to-t from-art-dark via-art-dark/70 to-transparent p-6 flex flex-col justify-end">
+                        <h3 class="text-xl md:text-2xl font-serif font-medium text-white mb-2">Landscape Design</h3>
+                        <p class="text-white/70 text-sm mb-4">baoji landscape design · 2024</p>
+                        <a href="#" class="inline-flex items-center text-art-accent hover:text-white transition-colors duration-300 text-sm group">
+                            View Details
+                            <i class="fa fa-long-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </a>
+                    </div>
+                    <!-- 存储图片及对应介绍的数据 -->
+                    <div class="image-data hidden">
+                        {
+                            "title": "Landscape Design",
+                            "category": "Design",
+                            "year": "2024",
+                            "medium": "Digital design",
+                            "description": "这组人像作品专注于捕捉人物情感流露的瞬间，通过眼神和姿态传达内心的故事。作品不追求完美的表象，而是专注于真实情感的表达，展现人性的复杂与美好，引发观者的共鸣。",
+                            "images": [
+                                {
+                                    "src": "/images/bj01.png",
+                                    "desc": "主视图：作品通过侧光照明突出人物面部轮廓，眼神中的沉思与迷茫被清晰捕捉。柔和的光线与适当的阴影对比，增强了画面的戏剧性与情感深度，让观者不由自主地猜测人物的内心世界。"
+                                },
+                                {
+                                    "src": "/images/bj02.png",
+                                    "desc": "细节图1：手部姿态往往能泄露人物的真实情感，这幅作品中紧握的双手暗示了人物内心的紧张与不安。这种细节的捕捉为理解人物情感提供了重要线索，丰富了作品的叙事层次。"
+                                },
+                                {
+                                    "src": "/images/bj03.png",
+                                    "desc": "环境人像：人物与周围环境的关系也成为情感表达的一部分，空旷的空间与人物形成对比，强化了孤独与思考的主题。环境元素的选择与布置都服务于整体情感的表达，创造出协调统一的视觉叙事。"
+                                },
+                                 {
+                                    "src": "/images/bj05.png",
+                                    "desc": "环境人像：人物与周围环境的关系也成为情感表达的一部分，空旷的空间与人物形成对比，强化了孤独与思考的主题。环境元素的选择与布置都服务于整体情感的表达，创造出协调统一的视觉叙事。"
+                                },
+                          {
+                                    "src": "/images/bj06.png",
+                                    "desc": "细节图1：手部姿态往往能泄露人物的真实情感，这幅作品中紧握的双手暗示了人物内心的紧张与不安。这种细节的捕捉为理解人物情感提供了重要线索，丰富了作品的叙事层次。"
+                                }
+                             
+                            ]
+                        }
+                    </div>
+                </div>
+
+
+
+                <!-- 作品2 -->
+                <div class="artwork-card group relative overflow-hidden rounded-sm art-shadow hover-lift opacity-0" data-animate="slide-up" data-delay="200" data-category="Design">
+                    <div class="overflow-hidden h-80">
+                        <img src="images/js1.png" alt="Landscape Design" class="artwork-image w-full h-full object-cover">
+                    </div>
+                    <div class="artwork-overlay absolute inset-0 bg-gradient-to-t from-art-dark via-art-dark/70 to-transparent p-6 flex flex-col justify-end">
+                        <h3 class="text-xl md:text-2xl font-serif font-medium text-white mb-2">Landscape Design</h3>
+                        <p class="text-white/70 text-sm mb-4">Junshan Riverside Landscape Planning and Design · 2023-2024</p>
+                        <a href="#" class="inline-flex items-center text-art-accent hover:text-white transition-colors duration-300 text-sm group">
+                            View Details
+                            <i class="fa fa-long-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </a>
+                    </div>
+                    <!-- 存储图片及对应介绍的数据 -->
+                    <div class="image-data hidden">
+                        {
+                            "title": "Landscape Design",
+                            "category": "Design",
+                            "year": "2023-2024",
+                            "medium": "Digital Design",
+                            "description": "这组Photography作品捕捉了城市夜景的魅力，通过长时间曝光技术展现了城市流动的光影之美。作品探索了人与自然创造的环境之间的关系，以及光线在夜间如何改变我们对空间的感知，呈现出与白天截然不同的城市性格。",
+                            "images": [
+                                {
+                                    "src": "images/jscp.png",
+                                    "desc": "城市天际线：使用24mm广角镜头拍摄，展现城市的壮阔与现代感，曝光时间10秒，捕捉了城市灯光的璀璨与层次。长时间曝光使得夜晚的天空呈现出深邃的蓝色，与建筑灯光形成鲜明对比。"
+                                },
+                                {
+                                    "src": "images/jsjt.png",
+                                    "desc": "街道光轨：采用30秒长曝光，记录下车辆行驶形成的光轨，ISO 100保证了画面的纯净度，展现了城市的动态与活力。光轨的流动感为静态的建筑增添了时间维度，呈现出城市的节奏感。"
+                                },
+                                {
+                                    "src": "images/jsxgt.png",
+                                    "desc": "建筑细节：使用50mm标准镜头拍摄，突出建筑的几何美感和灯光设计，展现了城市建筑的细节之美。夜间灯光勾勒出建筑的轮廓与结构，使平时被忽略的细节变得清晰可见。"
+                                }
+                            ]
+                        }
+                    </div>
+                </div>
+                
+       
+
+                <!-- 作品3 -->
+                <div class="artwork-card group relative overflow-hidden rounded-sm art-shadow hover-lift opacity-0" data-animate="slide-up" data-delay="300" data-category="Design">
+                    <div class="overflow-hidden h-80">
+                        <img src="images/hm0.png" alt="Landscape Design" class="artwork-image w-full h-full object-cover">
+                    </div>
+                    <div class="artwork-overlay absolute inset-0 bg-gradient-to-t from-art-dark via-art-dark/70 to-transparent p-6 flex flex-col justify-end">
+                        <h3 class="text-xl md:text-2xl font-serif font-medium text-white mb-2">Landscape Design</h3>
+                        <p class="text-white/70 text-sm mb-4">海绵 · 2023</p>
+                        <a href="#" class="inline-flex items-center text-art-accent hover:text-white transition-colors duration-300 text-sm group">
+                            查看详情
+                            <i class="fa fa-long-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </a>
+                    </div>
+                    <!-- 存储图片及对应介绍的数据 -->
+                    <div class="image-data hidden">
+                        {
+                            "title": "Landscape Design",
+                            "category": "Design",
+                            "year": "2023",
+                            "medium": "Digital Design",
+                            "description": "这幅Painting作品灵感来源于梦境与现实的边界，通过超现实的元素组合创造出一个奇幻的视觉世界。作品探讨了潜意识与现实之间的联系，以及科技对人类感知的影响，呈现出一个既熟悉又陌生的精神空间。",
+                            "images": [
+                                {
+                                    "src": "images/hm1.png",
+                                    "desc": "主视图：作品融合了自然元素与几何结构，创造出一个超现实的梦境空间，蓝色调为主的色彩营造出神秘氛围。数字技术使得这种复杂的元素组合成为可能，呈现出传统Design难以实现的细节与层次感。"
+                                },
+                                {
+                                    "src": "images/hm2.png",
+                                    "desc": "细节图1：这里展示了作品中复杂的纹理和层次，每个元素都经过精心设计，象征着梦境中的不同维度。数字Design技术允许艺术家进行无限次修改，直到达到理想中的效果。"
+                                },
+                                {
+                                    "src": "images/hm3.png",
+                                    "desc": "细节图2：作品中的光影处理借鉴了传统Design技巧，但通过数字工具实现了传统媒介难以达到的效果。光线在不同材质上的反射与折射被精确模拟，增强了画面的真实感与梦幻感。"
+                                }
+                            ]
+                        }
+                    </div>
+                </div>
+                
+                <!-- 作品4 -->
+                <div class="artwork-card group relative overflow-hidden rounded-sm art-shadow hover-lift opacity-0" data-animate="slide-up" data-delay="400" data-category="Photography">
+                    <div class="overflow-hidden h-80">
+                        <img src="images/photoBirdnz01.jpg" alt="Photography" class="artwork-image w-full h-full object-cover">
+                    </div>
+                    <div class="artwork-overlay absolute inset-0 bg-gradient-to-t from-art-dark via-art-dark/70 to-transparent p-6 flex flex-col justify-end">
+                        <h3 class="text-xl md:text-2xl font-serif font-medium text-white mb-2">Photography</h3>
+                        <p class="text-white/70 text-sm mb-4"> Landscape Photography· 2020-2025</p>
+                        <a href="#" class="inline-flex items-center text-art-accent hover:text-white transition-colors duration-300 text-sm group">
+                            View Details
+                            <i class="fa fa-long-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </a>
+                    </div>
+                    <!-- 存储图片及对应介绍的数据 -->
+                    <div class="image-data hidden">
+                        {
+                            "title": "流动的形态",
+                            "category": "Photography",
+                            "year": "2022",
+                            "medium": "不锈钢",
+                            "description": "这件AIGC作品以流动的线条和动态的形态为特点，展现了力量与优雅的平衡。通过金属材质的反光特性，作品在不同光线条件下呈现出截然不同的视觉效果，象征着事物的多面性与变化的永恒性。",
+                            "images": [
+                                {
+                                    "src": "images/photoSunset.jpg",
+                                    "desc": "正面视图：展示了AIGC的主要形态和流动感，不锈钢材质在自然光下呈现出金属光泽与环境反射。艺术家通过精确计算的曲线，创造出视觉上的流动感，仿佛静态的金属正在运动。"
+                                },
+                                {
+                                    "src": "images/photoMoon.jpg",
+                                    "desc": "侧面视图：从这个角度可以看到AIGC的层次感和空间关系，体现了艺术家对三维空间的把握。AIGC的每个角度都呈现出不同的形态，鼓励观者从多个视角欣赏作品。"
+                                },
+                                {
+                                    "src": "images/photoBirds.jpg",
+                                    "desc": "环境中的AIGC：展示了作品与周围环境的互动，金属表面反射周围景物，使AIGC成为环境的一部分。这种互动性模糊了艺术品与环境的界限，创造出动态的观赏体验。"
+                                },
+                                {
+                                    "src": "images/photoBirds2.jpg",
+                                    "desc": "侧面视图：从这个角度可以看到AIGC的层次感和空间关系，体现了艺术家对三维空间的把握。AIGC的每个角度都呈现出不同的形态，鼓励观者从多个视角欣赏作品。"
+                                },
+                                {
+                                    "src": "images/photoBird01.jpg",
+                                    "desc": "侧面视图：从这个角度可以看到AIGC的层次感和空间关系，体现了艺术家对三维空间的把握。AIGC的每个角度都呈现出不同的形态，鼓励观者从多个视角欣赏作品。"
+                                },
+                                {
+                                    "src": "images/photoBird02.jpg",
+                                    "desc": "侧面视图：从这个角度可以看到AIGC的层次感和空间关系，体现了艺术家对三维空间的把握。AIGC的每个角度都呈现出不同的形态，鼓励观者从多个视角欣赏作品。"
+                                },
+                                {
+                                    "src": "images/photoBirdnz02.jpg",
+                                    "desc": "侧面视图：从这个角度可以看到AIGC的层次感和空间关系，体现了艺术家对三维空间的把握。AIGC的每个角度都呈现出不同的形态，鼓励观者从多个视角欣赏作品。"
+                                },
+                                {
+                                    "src": "images/photoBird05.jpg",
+                                    "desc": "侧面视图：从这个角度可以看到AIGC的层次感和空间关系，体现了艺术家对三维空间的把握。AIGC的每个角度都呈现出不同的形态，鼓励观者从多个视角欣赏作品。"
+                                }
+            
+                            ]
+                        }
+                    </div>
+                </div>
+                
+                <!-- 作品5 -->
+                <div class="artwork-card group relative overflow-hidden rounded-sm art-shadow hover-lift opacity-0" data-animate="slide-up" data-delay="500" data-category="Painting">
+                    <div class="overflow-hidden h-80">
+                        <img src="images/pink.jpg" alt="Painting" class="artwork-image w-full h-full object-cover">
+                    </div>
+                    <div class="artwork-overlay absolute inset-0 bg-gradient-to-t from-art-dark via-art-dark/70 to-transparent p-6 flex flex-col justify-end">
+                        <h3 class="text-xl md:text-2xl font-serif font-medium text-white mb-2">Painting</h3>
+                        <p class="text-white/70 text-sm mb-4">Watercolor & digital painting· 2021</p>
+                        <a href="#" class="inline-flex items-center text-art-accent hover:text-white transition-colors duration-300 text-sm group">
+                            View Details
+                            <i class="fa fa-long-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </a>
+                    </div>
+                    <!-- 存储图片及对应介绍的数据 -->
+                    <div class="image-data hidden">
+                        {
+                            "title": "Painting",
+                            "category": "Painting",
+                            "year": "2021",
+                            "medium": "Watercolor",
+                            "description": "description",
+                            "images": [
+                                {
+                                    "src": "images/painting procreatCat.jpg",
+                                    "desc": "主视图：作品描绘了一个安静的室内场景，透过窗户的自然光在物体上形成柔和的光影。水彩特有的透明质感被充分利用，创造出轻盈而宁静的氛围，让人联想到午后的悠闲时光。"
+                                },
+                                {
+                                    "src": "images/painting procreatblack.jpg",
+                                    "desc": "细节图1：此处展示了艺术家对材质的精准表现，从布料的纹理到玻璃的透明感，都通过水彩特有的技法得到呈现。湿画法与干画法的结合，创造出丰富的质感层次。"
+                                },
+                                {
+                                    "src": "images/painting procreatPeople.jpg",
+                                    "desc": "细节图2：光线透过玻璃杯在桌面上形成的光斑是这幅作品的亮点，体现了艺术家对光影变化的敏锐观察和精准表现。这种微妙的光影效果为画面增添了生命力与真实感。"
+                                },
+                                  {
+                                    "src": "images/girl.png",
+                                    "desc": "细节图2：光线透过玻璃杯在桌面上形成的光斑是这幅作品的亮点，体现了艺术家对光影变化的敏锐观察和精准表现。这种微妙的光影效果为画面增添了生命力与真实感。"
+                                },
+                                   {
+                                    "src": "images/pink.jpg",
+                                    "desc": "细节图2：光线透过玻璃杯在桌面上形成的光斑是这幅作品的亮点，体现了艺术家对光影变化的敏锐观察和精准表现。这种微妙的光影效果为画面增添了生命力与真实感。"
+                                },
+                                   {
+                                    "src": "images/snoopy.png",
+                                    "desc": "细节图2：光线透过玻璃杯在桌面上形成的光斑是这幅作品的亮点，体现了艺术家对光影变化的敏锐观察和精准表现。这种微妙的光影效果为画面增添了生命力与真实感。"
+                                },
+                                      {
+                                    "src": "images/watercolor00.jpg",
+                                    "desc": "细节图2：光线透过玻璃杯在桌面上形成的光斑是这幅作品的亮点，体现了艺术家对光影变化的敏锐观察和精准表现。这种微妙的光影效果为画面增添了生命力与真实感。"
+                                },
+                                      {
+                                    "src": "images/paintingSolaris.jpg",
+                                    "desc": "细节图2：光线透过玻璃杯在桌面上形成的光斑是这幅作品的亮点，体现了艺术家对光影变化的敏锐观察和精准表现。这种微妙的光影效果为画面增添了生命力与真实感。"
+                                },
+                                      {
+                                    "src": "images/watercolorMatisse.jpg",
+                                    "desc": "细节图2：光线透过玻璃杯在桌面上形成的光斑是这幅作品的亮点，体现了艺术家对光影变化的敏锐观察和精准表现。这种微妙的光影效果为画面增添了生命力与真实感。"
+                                },
+                                      {
+                                    "src": "images/watercolor02.jpg",
+                                    "desc": "细节图2：光线透过玻璃杯在桌面上形成的光斑是这幅作品的亮点，体现了艺术家对光影变化的敏锐观察和精准表现。这种微妙的光影效果为画面增添了生命力与真实感。"
+                                }
+                                
+        
+                            ]
+                        }
+                    </div>
+                </div>
+                
+             
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系区域 -->
+    <section id="contact" class="py-24 md:py-32 bg-art-gray/90">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="text-sm uppercase tracking-widest text-white mb-4 opacity-0" data-animate="fade-in">Keep in touch</h2>
+                <h3 class="text-3xl md:text-5xl font-serif font-semibold mb-8 text-art-darkblue opacity-0" data-animate="slide-up" data-delay="200">Contact me</h3>
+                <p class="text-white/70 leading-relaxed opacity-0" data-animate="slide-up" data-delay="300">
+                    Interested in my work or considering a collaboration? <br>Please contact me via the details below, and I shall respond as soon as possible.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                <div class="bg-art-darkblue/60 p-8 border border-white/10 hover:border-art-accent transition-colors duration-500 opacity-0" data-animate="slide-up" data-delay="100">
+                    <div class="w-14 h-14 rounded-full bg-art-accent/10 flex items-center justify-center mb-6 mx-auto">
+                        <i class="fa fa-envelope text-art-accent text-xl"></i>
+                    </div>
+                    <h4 class="text-white text-lg font-medium mb-4 text-center">Email</h4>
+                    <p class="text-white/70 text-center">
+                        <a href="mailto:contact@artfolio.com" class="hover:text-art-accent transition-colors duration-300">mussesseiniris@gmail.com</a>
+                    </p>
+                </div>
+                
+                <div class="bg-art-darkblue/60 p-8 border border-white/10 hover:border-art-accent transition-colors duration-500 opacity-0" data-animate="slide-up" data-delay="200">
+                    <div class="w-14 h-14 rounded-full bg-art-accent/10 flex items-center justify-center mb-6 mx-auto">
+                        <i class="fa fa-phone text-art-accent text-xl"></i>
+                    </div>
+                    <h4 class="text-white text-lg font-medium mb-4 text-center">Telephone</h4>
+                    <p class="text-white/70 text-center">
+                        <a href="tel:+8612345678910" class="hover:text-art-accent transition-colors duration-300">+86 123 4567 8910</a>
+                    </p>
+                </div>
+                
+                <div class="bg-art-darkblue/60 p-8 border border-white/10 hover:border-art-accent transition-colors duration-500 opacity-0" data-animate="slide-up" data-delay="300">
+                    <div class="w-14 h-14 rounded-full bg-art-accent/10 flex items-center justify-center mb-6 mx-auto">
+                        <i class="fa fa-map-marker text-art-accent text-xl"></i>
+                    </div>
+                    <h4 class="text-white text-lg font-medium mb-4 text-center">Address</h4>
+                    <p class="text-white/70 text-center">
+                        Wellington<br>New Zealand
+                    </p>
+                </div>
+            </div>
+            
+            <div class="mt-16 text-center opacity-0" data-animate="slide-up" data-delay="400">
+                <h4 class="text-white text-lg font-medium mb-6">Follow me on social media</h4>
+                <div class="flex justify-center space-x-6">
+                    <a href="#" class="w-12 h-12 rounded-full bg-art-dark/50 border border-white/10 flex items-center justify-center text-white hover:bg-art-accent hover:text-art-dark hover:border-art-accent transition-all duration-500">
+                        <i class="fa fa-instagram"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 rounded-full bg-art-dark/50 border border-white/10 flex items-center justify-center text-white hover:bg-art-accent hover:text-art-dark hover:border-art-accent transition-all duration-500">
+                        <i class="fa fa-facebook"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 rounded-full bg-art-dark/50 border border-white/10 flex items-center justify-center text-white hover:bg-art-accent hover:text-art-dark hover:border-art-accent transition-all duration-500">
+                        <i class="fa fa-twitter"></i>
+                    </a>
+                    <a href="www.linkedin.com/in/si-zhang-iris" target="_blank" class="w-12 h-12 rounded-full bg-art-dark/50 border border-white/10 flex items-center justify-center text-white hover:bg-art-accent hover:text-art-dark hover:border-art-accent transition-all duration-500">
+                        <i class="fa fa-linkedin"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-art-dark py-12 border-t border-white/10">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <a href="#" class="text-2xl font-serif font-semibold text-white tracking-wider">
+                        ART<span class="text-art-accent">FOLIO</span>
+                    </a>
+                    <p class="text-white/50 mt-2 text-sm">© 2025 版权所有</p>
+                </div>
+                
+                <div class="text-white/50 text-sm">
+                    用艺术表达生活的深度与美感
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 作品详情模态框 -->
+    <div id="portfolioModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title font-serif"></h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-image-container">
+                    <img id="modalCurrentImage" class="modal-image" src="" alt="">
+                    <div class="modal-navigation">
+                        <button id="modalPrevBtn" class="modal-nav-btn">
+                            <i class="fa fa-angle-left"></i>
+                        </button>
+                        <button id="modalNextBtn" class="modal-nav-btn">
+                            <i class="fa fa-angle-right"></i>
+                        </button>
+                    </div>
+                    <div class="modal-indicators" id="modalIndicators">
+                        <!-- 动态生成指示器 -->
+                    </div>
+                    <div class="modal-image-counter" id="modalImageCounter">
+                        图片 1/4
+                    </div>
+                </div>
+                <div class="modal-details">
+                    <span class="modal-category" id="modalCategory"></span>
+                    <div class="modal-description" id="modalDescription"></div>
+                    <div class="modal-image-desc" id="modalImageDesc">
+                        图片介绍将显示在这里
+                    </div>
+                    <div class="modal-meta">
+                        <p><strong>创作年份：</strong> <span id="modalYear"></span></p>
+                        <p><strong>媒介：</strong> <span id="modalMedium"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 100) {
+                navbar.classList.remove('nav-transparent');
+                navbar.classList.add('nav-solid', 'py-4');
+            } else {
+                navbar.classList.add('nav-transparent');
+                navbar.classList.remove('nav-solid', 'py-4');
+            }
+        });
+
+        // 移动端菜单
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        menuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+            const icon = menuBtn.querySelector('i');
+            if (icon.classList.contains('fa-bars')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // 点击移动端菜单项后关闭菜单
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                mobileMenu.classList.add('hidden');
+                const icon = menuBtn.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+
+        // 滚动动画
+        const animateElements = document.querySelectorAll('[data-animate]');
+        
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const element = entry.target;
+                    const animation = element.getAttribute('data-animate');
+                    const delay = element.getAttribute('data-delay') || 0;
+                    
+                    element.style.animationDelay = `${delay}ms`;
+                    
+                    if (animation === 'fade-in') {
+                        element.classList.add('animate-fade-in');
+                    } else if (animation === 'slide-up') {
+                        element.classList.add('animate-slide-up');
+                    }
+                    
+                    element.style.opacity = 1;
+                    observer.unobserve(element);
+                }
+            });
+        }, observerOptions);
+        
+        animateElements.forEach(element => {
+            observer.observe(element);
+        });
+
+        // 作品筛选功能
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const portfolioItems = document.querySelectorAll('.artwork-card');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 移除所有按钮的active类
+                filterBtns.forEach(b => {
+                    b.classList.remove('active', 'bg-art-accent', 'text-art-dark');
+                    b.classList.add('bg-transparent', 'border', 'border-white/20', 'text-white/80', 'hover:bg-art-accent', 'hover:text-art-dark');
+                });
+                
+                // 给当前点击的按钮添加active类
+                this.classList.add('active', 'bg-art-accent', 'text-art-dark');
+                this.classList.remove('bg-transparent', 'border', 'border-white/20', 'text-white/80', 'hover:bg-art-accent', 'hover:text-art-dark');
+                
+                const filterValue = this.textContent.trim();
+                
+                // 筛选作品
+                portfolioItems.forEach(item => {
+                    if (filterValue === 'Complete Works' || item.getAttribute('data-category') === filterValue) {
+                        item.style.display = 'block';
+                        // 添加淡入效果
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'translateY(0)';
+                        }, 50);
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateY(20px)';
+                        // 延迟隐藏，让动画完成
+                        setTimeout(() => {
+                            item.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+        // 作品详情模态框功能
+        const modal = document.getElementById('portfolioModal');
+        const modalClose = document.querySelector('.modal-close');
+        const modalTitle = document.querySelector('.modal-title');
+        const modalCurrentImage = document.getElementById('modalCurrentImage');
+        const modalCategory = document.getElementById('modalCategory');
+        const modalDescription = document.getElementById('modalDescription');
+        const modalYear = document.getElementById('modalYear');
+        const modalMedium = document.getElementById('modalMedium');
+        const modalImageDesc = document.getElementById('modalImageDesc');
+        const modalImageCounter = document.getElementById('modalImageCounter');
+        const modalPrevBtn = document.getElementById('modalPrevBtn');
+        const modalNextBtn = document.getElementById('modalNextBtn');
+        const modalIndicators = document.getElementById('modalIndicators');
+        
+        // 当前图片索引和图片数据
+        let currentImageIndex = 0;
+        let currentItemImages = [];
+
+        // 打开模态框
+        document.querySelectorAll('.artwork-card').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 获取作品数据
+                const imageDataElement = this.querySelector('.image-data');
+                const itemData = JSON.parse(imageDataElement.textContent);
+                
+                // 存储当前作品的图片数据
+                currentItemImages = itemData.images;
+                currentImageIndex = 0;
+                
+                // 填充模态框内容
+                modalTitle.textContent = itemData.title;
+                modalCategory.textContent = itemData.category;
+                modalDescription.textContent = itemData.description;
+                modalYear.textContent = itemData.year;
+                modalMedium.textContent = itemData.medium;
+                
+                // 显示第一张图片及信息
+                updateModalImage();
+                
+                // 生成图片指示器
+                generateImageIndicators();
+                
+                // 显示模态框
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden'; // 防止背景滚动
+            });
+        });
+
+        // 更新模态框中的图片和描述
+        function updateModalImage() {
+            const imageData = currentItemImages[currentImageIndex];
+            modalCurrentImage.src = imageData.src;
+            modalCurrentImage.alt = `${modalTitle.textContent} - 图片 ${currentImageIndex + 1}`;
+            modalImageDesc.textContent = imageData.desc;
+            modalImageCounter.textContent = `图片 ${currentImageIndex + 1}/${currentItemImages.length}`;
+            
+            // 更新指示器状态
+            updateImageIndicators();
+        }
+
+        // 生成图片指示器
+        function generateImageIndicators() {
+            modalIndicators.innerHTML = '';
+            
+            currentItemImages.forEach((_, index) => {
+                const indicator = document.createElement('button');
+                indicator.className = `modal-indicator ${index === 0 ? 'active' : ''}`;
+                indicator.addEventListener('click', () => {
+                    currentImageIndex = index;
+                    updateModalImage();
+                });
+                modalIndicators.appendChild(indicator);
+            });
+        }
+
+        // 更新指示器状态
+        function updateImageIndicators() {
+            const indicators = modalIndicators.querySelectorAll('.modal-indicator');
+            indicators.forEach((indicator, index) => {
+                if (index === currentImageIndex) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
+        }
+
+        // 上一张图片
+        function showPrevImage() {
+            currentImageIndex = (currentImageIndex - 1 + currentItemImages.length) % currentItemImages.length;
+            updateModalImage();
+        }
+
+        // 下一张图片
+        function showNextImage() {
+            currentImageIndex = (currentImageIndex + 1) % currentItemImages.length;
+            updateModalImage();
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = ''; // 恢复背景滚动
+        }
+
+        // 事件监听
+        modalClose.addEventListener('click', closeModal);
+        modalPrevBtn.addEventListener('click', showPrevImage);
+        modalNextBtn.addEventListener('click', showNextImage);
+
+        // 点击模态框外部关闭
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // 按ESC键关闭
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        // 键盘左右箭头切换图片
+        document.addEventListener('keydown', function(e) {
+            if (modal.classList.contains('active')) {
+                if (e.key === 'ArrowLeft') {
+                    showPrevImage();
+                } else if (e.key === 'ArrowRight') {
+                    showNextImage();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
+

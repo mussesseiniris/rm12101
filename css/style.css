@@ -1,0 +1,338 @@
+/* Tailwind 配置通过CDN加载，这里保留自定义工具类 */
+@layer utilities {
+    .content-auto {
+        content-visibility: auto;
+    }
+    .text-stroke {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+        color: transparent;
+    }
+    .art-shadow {
+        box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.2);
+    }
+    .hover-lift {
+        transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                    box-shadow 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .hover-lift:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* 基础动画 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 1.2s ease forwards;
+}
+
+.animate-slide-up {
+    animation: slideUp 1s ease forwards;
+}
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-700 { animation-delay: 0.7s; }
+.delay-1000 { animation-delay: 1s; }
+
+/* 导航栏效果 */
+.nav-transparent {
+    background-color: transparent;
+    transition: background-color 0.5s ease;
+}
+
+.nav-solid {
+    background-color: rgba(18, 18, 18, 0.95);
+    transition: background-color 0.5s ease;
+}
+
+/* 图片悬停效果 */
+.artwork-overlay {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.artwork-card:hover .artwork-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.artwork-image {
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.artwork-card:hover .artwork-image {
+    transform: scale(1.05);
+}
+
+/* 平滑滚动 */
+html {
+    scroll-behavior: smooth;
+}
+
+/* 模态框样式 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(18, 18, 18, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background-color: #1a1a1a;
+    border-radius: 2px;
+    max-width: 92%;
+    max-height: 90%;
+    width: 100%;
+    max-width: 1600px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal.active .modal-content {
+    transform: scale(1);
+}
+
+.modal-header {
+    padding: 20px 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    opacity: 0.7;
+}
+
+.modal-close:hover {
+    color: #c8a985;
+    opacity: 1;
+}
+
+.modal-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.modal-image-container {
+    flex: 1;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-color: #121212;
+}
+
+.modal-image {
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    transition: opacity 0.3s ease;
+}
+
+.modal-navigation {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.modal-nav-btn {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 20px;
+    opacity: 0.7;
+}
+
+.modal-nav-btn:hover {
+    background-color: rgba(200, 169, 133, 0.8);
+    opacity: 1;
+}
+
+.modal-details {
+    flex: 0 0 420px;
+    padding: 30px;
+    overflow-y: auto;
+    color: #e0d9d2;
+}
+
+.modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.modal-category {
+    color: #c8a985;
+    margin-bottom: 25px;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 14px;
+}
+
+.modal-description {
+    margin-bottom: 30px;
+    line-height: 1.8;
+    font-size: 15px;
+}
+
+.modal-image-desc {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-left: 2px solid #c8a985;
+    margin-top: 20px;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.modal-image-counter {
+    margin-top: 18px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+    text-align: center;
+}
+
+.modal-meta {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-meta p {
+    margin-bottom: 15px;
+    font-size: 15px;
+}
+
+.modal-meta strong {
+    color: #c8a985;
+    width: 110px;
+    display: inline-block;
+}
+
+.modal-indicators {
+    display: flex;
+    gap: 8px;
+    margin-top: 25px;
+    justify-content: center;
+}
+
+.modal-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-indicator.active {
+    background-color: #c8a985;
+    transform: scale(1.2);
+}
+
+/* 响应式调整 */
+@media (max-width: 1024px) {
+    .modal-body {
+        flex-direction: column;
+    }
+    
+    .modal-details {
+        flex: none;
+        max-height: 40%;
+    }
+    
+    .modal-image-container {
+        max-height: 60%;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 640px) {
+    .modal-header {
+        padding: 15px 20px;
+    }
+    
+    .modal-title {
+        font-size: 26px;
+    }
+    
+    .modal-details {
+        padding: 20px;
+        flex: none;
+        max-height: 50%;
+    }
+    
+    .modal-image-container {
+        padding: 15px;
+        max-height: 50%;
+    }
+    
+    .modal-nav-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+}
